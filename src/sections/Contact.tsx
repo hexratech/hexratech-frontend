@@ -1,6 +1,6 @@
-import SectionTitle from "../components/SectionTitle";
-import Button from "../components/Button";
 import { Mail, Phone, MapPin } from "lucide-react";
+import Button from "../components/Button";
+import SectionTitle from "../components/SectionTitle";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -67,7 +67,7 @@ const Contact: React.FC = () => {
         >
           <SectionTitle
             subtitle="Get In Touch"
-            title="We’d Love to Hear From You"
+            title="We'd Love to Hear From You"
             align="left"
           />
 
@@ -118,10 +118,7 @@ const Contact: React.FC = () => {
           >
             {/* Name */}
             <div>
-              <label
-                htmlFor="contact-name"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700">
                 Name
               </label>
               <input
@@ -136,10 +133,7 @@ const Contact: React.FC = () => {
 
             {/* Email */}
             <div>
-              <label
-                htmlFor="contact-email"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -154,10 +148,7 @@ const Contact: React.FC = () => {
 
             {/* Phone */}
             <div>
-              <label
-                htmlFor="contact-phone"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-phone" className="block text-sm font-medium text-gray-700">
                 Phone
               </label>
               <input
@@ -173,10 +164,7 @@ const Contact: React.FC = () => {
 
             {/* Message */}
             <div>
-              <label
-                htmlFor="contact-message"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700">
                 Message
               </label>
               <textarea
@@ -215,7 +203,7 @@ const Contact: React.FC = () => {
               <p className="text-gray-800 text-lg">
                 Your message has been sent.
                 <br />
-                We’ll get back to you soon.
+                We'll get back to you soon.
               </p>
               <button
                 onClick={() => setShowPopup(false)}

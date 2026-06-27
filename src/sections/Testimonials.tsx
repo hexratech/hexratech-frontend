@@ -1,95 +1,80 @@
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import SectionTitle from "../components/SectionTitle";
-import { motion} from "framer-motion";
-import type { Variants } from "framer-motion";
-interface Testimonial {
-  name: string;
-  role: string;
-  feedback: string;
-}
 
-const testimonials: Testimonial[] = [
+const testimonials = [
   {
-    name: "Sarah Kampo",
-    role: "CEO, BrightTech",
-    feedback:
-      "Working with this agency was a game-changer. They understood our vision and delivered a product that exceeded expectations.",
-  
+    name: "Kwame Mensah",
+    company: "TechHub Africa",
+    text: "HexraTech completely transformed our online presence. Their attention to detail and commitment to quality is unmatched.",
   },
   {
-    name: "Eben Ampoma",
-    role: "Marketing Lead, GlobalReach",
-    feedback:
-      "Professional, creative, and highly skilled — the team brought our ideas to life with a fresh perspective.",
+    name: "Sarah Osei",
+    company: "Bloom Boutique",
+    text: "Working with them was a breeze. They understood our vision perfectly and delivered a stunning, high-performing website.",
   },
   {
-    name: "Emily Mensah",
-    role: "Founder, EcoStyle",
-    feedback:
-      "Their attention to detail and dedication stood out. We’ve seen a huge boost in engagement since launch!",
+    name: "David Amponsah",
+    company: "FinCorp Solutions",
+    text: "Professional, responsive, and incredibly talented. They exceeded our expectations in every way.",
   },
+  {
+    name: "Amina Yeboah",
+    company: "Creative Studio",
+    text: "The web experiences they brought to our site helped us double our client inquiries in a month.",
+  }
 ];
 
-// Card animation
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
-  }),
-};
-
 const Testimonials: React.FC = () => {
-  return (
-    <section id="testimonials" className="py-20 bg-gray-50 px-6 lg:px-20">
-      <div className="container mx-auto">
-        {/* Section Title */}
-        <motion.div
-          className="mb-12 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: true }}
-        >
-          <SectionTitle
-            subtitle="Our Clients Say"
-            title="Testimonials"
-            align="center"
-          />
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-            Don’t just take our word for it — here’s what our clients have to
-            say about working with us.
-          </p>
-        </motion.div>
+  const targetRef = useRef<HTMLDivElement>(null);
+  
+  // Track scroll progress for the parallax container
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+  });
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-65%"]);
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const bgY2 = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
+
+  return (
+    <section id="testimonials" ref={targetRef} className="relative bg-gray-50 h-[300vh]">
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+        
+        <motion.div style={{ y: bgY }} className="absolute top-10 md:top-20 right-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-blue-100/60 rounded-full blur-3xl -z-10 pointer-events-none" />
+        <motion.div style={{ y: bgY2 }} className="absolute bottom-10 left-[-10%] w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-indigo-100/50 rounded-full blur-3xl -z-10 pointer-events-none" />
+
+        <div className="pl-6 lg:pl-20 mb-8 md:mb-12">
+          <SectionTitle subtitle="Client Feedback" title="What They Say About Us" />
+          <p className="mt-3 md:mt-4 text-gray-500 text-base md:text-lg font-light leading-relaxed max-w-xl">
+            Don't just take our word for it. Here is what some of our amazing clients have to say about working with us.
+          </p>
+        </div>
+
+        <motion.div style={{ x }} className="flex gap-6 md:gap-8 px-6 lg:px-20 w-[350vw] sm:w-[250vw] lg:w-[200vw]">
           {testimonials.map((testimonial, index) => (
-            <motion.div
+            <div
               key={index}
-              className="bg-white p-8 rounded-2xl shadow-lg flex flex-col"
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={index}
-              whileHover={{ scale: 1.03, y: -5 }}
-              transition={{ duration: 0.3 }}
+              className="w-[80vw] sm:w-[50vw] lg:w-[35vw] shrink-0 bg-white p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.05)] border border-gray-100 hover:border-blue-100 hover:shadow-[0_12px_40px_rgb(59,130,246,0.10)] transition-all duration-500 flex flex-col relative overflow-hidden"
             >
-              <p className="text-gray-700 italic mb-6">
-                “{testimonial.feedback}”
+              <div className="absolute top-2 md:top-4 right-6 md:right-8 text-7xl md:text-9xl text-blue-50 font-serif leading-none select-none pointer-events-none">"</div>
+
+              <p className="text-gray-600 italic mb-8 md:mb-10 leading-relaxed font-light text-base md:text-xl relative z-10">
+                "{testimonial.text}"
               </p>
-              <div className="flex items-center gap-4 mt-auto">
+
+              <div className="flex items-center gap-4 md:gap-5 mt-auto relative z-10">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-lg md:text-xl border border-blue-100">
+                  {testimonial.name.charAt(0)}
+                </div>
                 <div>
-                  <h4 className="text-gray-900 font-semibold">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                  <h4 className="font-semibold text-gray-900 text-base md:text-lg">{testimonial.name}</h4>
+                  <p className="text-blue-600 font-medium text-sm md:text-base">{testimonial.company}</p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
