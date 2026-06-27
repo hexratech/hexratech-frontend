@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
-import SectionTitle from "../components/SectionTitle";
-import {  Linkedin } from "lucide-react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Linkedin } from "lucide-react";
 
 interface TeamMember {
   name: string;
@@ -17,104 +16,81 @@ interface TeamMember {
 const team: TeamMember[] = [
   {
     name: "Agyemang Arnold",
-    role: "******",
+    role: "Lead Developer",
     image: "/assets/team1.jpg",
     socials: [
-      //{ icon: <Facebook className="w-5 h-5" />, link: "#" },
-      //{ icon: <Twitter className="w-5 h-5" />, link: "#" },
       { icon: <Linkedin className="w-5 h-5" />, link: "https://www.linkedin.com/in/arnold-agyemang-718067205/" },
     ],
   },
   {
     name: "Siaw Albert",
-    role: "******",
+    role: "Design Lead",
     image: "/assets/team2.jpg",
     socials: [
-      //{ icon: <Facebook className="w-5 h-5" />, link: "#" },
-      //{ icon: <Twitter className="w-5 h-5" />, link: "#" },
       { icon: <Linkedin className="w-5 h-5" />, link: "https://www.linkedin.com/in/albert-siaw-55451733a/" },
     ],
   },
 ];
 
-// Card animation
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
-  }),
-};
-
 const Team: React.FC = () => {
-  return (
-    <section id="team" className="py-20 bg-white px-6 lg:px-20">
-      <div className="container mx-auto">
-        {/* Section Title */}
-        <motion.div
-          className="mb-12 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: true }}
-        >
-          <SectionTitle
-            subtitle="Meet Our Team"
-            title="The People Behind the Magic"
-            align="center"
-          />
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-            Our passionate and skilled team members are dedicated to bringing
-            your ideas to life with creativity, innovation, and excellence.
-          </p>
-        </motion.div>
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
 
-        {/* Team Members Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+  const y1 = useTransform(scrollYProgress, [0, 1], ["10%", "-10%"]);
+  const y2 = useTransform(scrollYProgress, [0, 1], ["30%", "-30%"]); // Stagger effect
+
+  return (
+    <section id="team" ref={ref} className="bg-[#050505] text-white py-32 lg:py-48 border-t border-white/5">
+      <div className="container mx-auto px-6 lg:px-20">
+        
+        <div className="mb-24 md:mb-32 flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-12">
+          <div>
+            <h2 className="text-xs font-bold tracking-[0.3em] text-gray-500 uppercase mb-6">Meet Our Team</h2>
+            <h3 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.1]">
+              The People<br/><span className="text-gray-600">Behind It All</span>
+            </h3>
+          </div>
+          <p className="mt-8 md:mt-0 text-gray-400 text-xl font-light max-w-sm leading-relaxed tracking-tight">
+            Dedicated to bringing your ideas to life with strict engineering and creative excellence.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
           {team.map((member, index) => (
             <motion.div
               key={index}
-              className="bg-gray-50 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={index}
-              whileHover={{ scale: 1.05, y: -5 }}
+              style={{ y: index % 2 === 0 ? y1 : y2 }}
+              className="group relative"
             >
-              {/* Image */}
-              <motion.img
-                src={member.image}
-                alt={member.name}
-                className="w-full h-72 object-cover"
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.4 }}
-              />
-
-              {/* Info */}
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {member.name}
-                </h3>
-                <p className="text-indigo-600 text-sm font-medium">
-                  {member.role}
-                </p>
-
-                {/* Social Links */}
-                <div className="flex justify-center gap-4 mt-4">
+              <div className="aspect-[3/4] w-full overflow-hidden bg-white/5 mb-8 relative">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 scale-105 group-hover:scale-100"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${member.name}&background=050505&color=ffffff&size=512`;
+                  }}
+                />
+              </div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-3xl font-medium tracking-tight mb-2">{member.name}</h3>
+                  <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">{member.role}</p>
+                </div>
+                <div className="flex gap-4">
                   {member.socials.map((social, i) => (
-                    <motion.a
+                    <a
                       key={i}
                       href={social.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-500 hover:text-indigo-600"
-                      whileHover={{ scale: 1.2, rotate: 10 }}
-                      transition={{ type: "spring", stiffness: 300 }}
+                      className="text-gray-500 hover:text-white transition-colors"
                     >
                       {social.icon}
-                    </motion.a>
+                    </a>
                   ))}
                 </div>
               </div>
